@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ミックス・ボーカル編集の依頼 — tokyomeltdown</title>
+<meta name="description" content="ミックスとボーカル編集を承ります。パラミックス30,000円、ステムミックス20,000円、INST＋ボーカル15,000円（1曲・税込）。ボーカル編集は5トラックまで15,000円。修正回数の上限なし。caps REC・LUFSBar を作っているエンジニアです。">
+<meta name="theme-color" content="#000000">
+<link rel="canonical" href="https://tokyomeltdown.github.io/mix/ja/">
+<link rel="alternate" hreflang="en" href="https://tokyomeltdown.github.io/mix/">
+<link rel="alternate" hreflang="ja" href="https://tokyomeltdown.github.io/mix/ja/">
+<link rel="alternate" hreflang="x-default" href="https://tokyomeltdown.github.io/mix/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ミックス・ボーカル編集の依頼 — tokyomeltdown">
+<meta property="og:description" content="ミックスとボーカル編集を承ります。まず曲を聴かせてください。">
+<meta property="og:url" content="https://tokyomeltdown.github.io/mix/ja/">
+<meta property="og:site_name" content="tokyomeltdown">
+<meta property="og:image" content="https://tokyomeltdown.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="tokyomeltdown — 音を扱う人のためのMacツール">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root{--bg:#000;--panel:#0D0D0F;--panel2:#141416;--line:rgba(255,255,255,.10);
+    --fg:#F5F5F7;--fg2:#86868B;--fg3:#6E6E73;--led:#31D158}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--fg);font-size:17px;line-height:1.75;letter-spacing:.01em;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Hiragino Sans","Noto Sans JP",sans-serif;
+    -webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:940px;margin:0 auto;padding:0 28px}
+
+  nav{position:sticky;top:0;z-index:30;background:rgba(0,0,0,.68);backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:54px}
+  .brand{font-size:14px;text-decoration:none;color:var(--fg2)}
+  .brand:hover{color:var(--fg)}
+  .langlink{font-size:13px;color:var(--fg2);text-decoration:none;border:1px solid var(--line);
+    border-radius:999px;padding:4px 14px}
+  .langlink:hover{color:var(--fg);border-color:rgba(255,255,255,.28)}
+
+  header{padding:104px 0 68px}
+  h1{font-size:clamp(30px,4.6vw,52px);line-height:1.18;letter-spacing:-.02em;font-weight:600}
+  .lede{margin-top:22px;max-width:28em;font-size:19px;line-height:1.72;color:var(--fg2)}
+  .cta{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;height:48px;padding:0 26px;border-radius:980px;
+    font-size:16px;text-decoration:none;transition:.2s}
+  .btn-p{background:var(--led);color:#06210F;font-weight:600}
+  .btn-p:hover{filter:brightness(1.08)}
+  .btn-g{border:1px solid rgba(255,255,255,.28)}
+  .btn-g:hover{background:rgba(255,255,255,.07)}
+
+  section{padding:0 0 88px}
+  h2{font-size:13px;font-weight:600;color:#6DD498;margin-bottom:20px}
+  h3{font-size:20px;font-weight:600;letter-spacing:-.01em}
+
+  .rows{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
+    border-radius:16px;overflow:hidden}
+  .row{background:var(--panel);padding:28px;display:grid;grid-template-columns:1fr auto;
+    gap:20px;align-items:start}
+  .row p{margin-top:8px;font-size:15px;color:var(--fg2);max-width:34em}
+  .price{text-align:right;white-space:nowrap}
+  .price .jpy{font-size:24px;font-weight:600;letter-spacing:-.02em}
+  .price .usd{display:block;margin-top:2px;font-size:13px;color:var(--fg3)}
+  .note{margin-top:18px;font-size:14px;color:var(--fg3)}
+
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px}
+  .step .num{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
+    letter-spacing:.08em;color:var(--fg3);display:block;margin-bottom:12px}
+  .step h3{font-size:17px}
+  .step p{margin-top:8px;font-size:15px;color:var(--fg2)}
+
+  .contact{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:38px}
+  .contact p{margin-top:12px;color:var(--fg2);font-size:16px;max-width:32em}
+
+  footer{border-top:1px solid var(--line);padding:44px 0 72px;color:var(--fg3);font-size:13px}
+  footer a{color:var(--fg2);text-decoration:none;margin-right:20px}
+  footer a:hover{color:var(--fg)}
+  a:focus-visible{outline:2px solid var(--led);outline-offset:4px;border-radius:8px}
+
+  @media (max-width:620px){
+    .row{grid-template-columns:1fr}
+    .price{text-align:left}
+  }
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="brand" href="/">tokyomeltdown</a>
+  <a class="langlink" href="/mix/">EN</a>
+</div></nav>
+
+<header><div class="wrap">
+  <h1>ミックス、承ります。</h1>
+  <p class="lede">このサイトに置いてあるツールは、どれも現場の作業から生まれたものです。うまく決まらない曲があれば、送ってください。</p>
+  <div class="cta">
+    <a class="btn btn-p" href="mailto:tokyomeltdown.ai@gmail.com?subject=%E3%83%9F%E3%83%83%E3%82%AF%E3%82%B9%E3%81%AE%E3%81%94%E7%9B%B8%E8%AB%87">曲を送る</a>
+    <a class="btn btn-g" href="#pricing">料金を見る</a>
+  </div>
+</div></header>
+
+<section id="pricing"><div class="wrap">
+  <h2>ミックス</h2>
+  <div class="rows">
+
+    <div class="row">
+      <div>
+        <h3>パラミックス</h3>
+        <p>セッションから出したトラックを、そのまま全部お預かりします。一番手を入れられる形です。アレンジ側にまだ判断の余地があるなら、これをおすすめします。</p>
+      </div>
+      <div class="price"><span class="jpy">30,000円</span><span class="usd">約 $199</span></div>
+    </div>
+
+    <div class="row">
+      <div>
+        <h3>ステムミックス</h3>
+        <p>ドラム、ベース、ギター、キーボード、ボーカルなどにまとめた状態でお預かりします。バランスと質感と奥行きを整えます。グループの中身には触れません。</p>
+      </div>
+      <div class="price"><span class="jpy">20,000円</span><span class="usd">約 $129</span></div>
+    </div>
+
+    <div class="row">
+      <div>
+        <h3>INST＋ボーカル</h3>
+        <p>できあがったオケとボーカルの2つをお預かりします。ボーカルをオケに収めた状態でお返しします。</p>
+      </div>
+      <div class="price"><span class="jpy">15,000円</span><span class="usd">約 $99</span></div>
+    </div>
+
+  </div>
+  <p class="note">1曲あたりの基本料金です。表示価格は税込。ドル表記は目安で、為替で変わります。</p>
+</div></section>
+
+<section><div class="wrap">
+  <h2>ボーカル編集・下ごしらえ</h2>
+  <div class="rows">
+    <div class="row">
+      <div>
+        <h3>ピッチ、タイミング、クリップゲイン</h3>
+        <p>ミックスに入る前の下作業です。リードボーカル1本にハモやコーラスを足して計5本までが基本料金の範囲になります（例：ハモ上 L/R、ハモ下 L/R、リードのオク下1本）。これより本数が増える場合はご相談ください。</p>
+      </div>
+      <div class="price"><span class="jpy">15,000円</span><span class="usd">約 $99</span></div>
+    </div>
+  </div>
+  <p class="note">単体でも、ミックスと一緒でもお受けします。</p>
+</div></section>
+
+<section><div class="wrap">
+  <h2>ご依頼の流れ</h2>
+  <div class="steps">
+    <div class="step">
+      <span class="num">01</span>
+      <h3>ファイルを送る</h3>
+      <p>参考にしたい曲があれば一緒に。狙っている方向が分かると、やり直しが1回減ります。</p>
+    </div>
+    <div class="step">
+      <span class="num">02</span>
+      <h3>見積もりと納期をお返しする</h3>
+      <p>納期はご相談のうえ決めます。作業に入る前にお伝えするので、あとから食い違うことはありません。</p>
+    </div>
+    <div class="step">
+      <span class="num">03</span>
+      <h3>納得いくまで直す</h3>
+      <p>修正回数に上限は設けていません。気になるところがなくなるまでお付き合いします。</p>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="contact">
+    <h3>まず、曲を聴かせてください。</h3>
+    <p>どんな曲で、どこが気になっているのかを一言添えていただけると早いです。日本語でも英語でも構いません。</p>
+    <p>これまでの仕事は守秘義務があるためこのページには載せていませんが、ご連絡いただければ参考になるミックスのリンクをお送りします。</p>
+    <div class="cta">
+      <a class="btn btn-p" href="mailto:tokyomeltdown.ai@gmail.com?subject=%E3%83%9F%E3%83%83%E3%82%AF%E3%82%B9%E3%81%AE%E3%81%94%E7%9B%B8%E8%AB%87">tokyomeltdown.ai@gmail.com</a>
+    </div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <a href="/">アプリ</a>
+  <a href="/mix/">EN</a>
+  <a href="https://github.com/tokyomeltdown">GitHub</a>
+  <p style="margin-top:16px">© 2026 tokyomeltdown</p>
+</div></footer>
+
+</body>
+</html>
