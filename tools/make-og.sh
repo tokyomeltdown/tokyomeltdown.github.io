@@ -1,6 +1,6 @@
 #!/bin/bash
 # Renders tools/og-source.html to /og-image.png at 1200x630, the size the
-# social cards use.
+# social cards use, or with "x" the X profile header at 1500x500.
 #
 # Chrome rather than a screenshot tool, because the size has to be exact: a
 # card that is a pixel off gets rescaled and the type goes soft.
@@ -17,12 +17,21 @@ CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
-( cd "$TMP" && "$CHROME" --headless --disable-gpu --hide-scrollbars \
-    --force-device-scale-factor=1 --window-size=1200,630 \
-    --screenshot="$TMP/out.png" \
-    "file://$ROOT/tools/og-source.html" >/dev/null 2>&1 )
+render () {   # source, width, height, output
+    ( cd "$TMP" && "$CHROME" --headless --disable-gpu --hide-scrollbars \
+        --force-device-scale-factor=1 --window-size="$2,$3" \
+        --screenshot="$TMP/out.png" \
+        "file://$ROOT/tools/$1" >/dev/null 2>&1 )
 
-[ -f "$TMP/out.png" ] || { echo "Chrome produced no image"; exit 1; }
-mv "$TMP/out.png" "$ROOT/og-image.png"
-sips -g pixelWidth -g pixelHeight "$ROOT/og-image.png"
-echo "wrote $ROOT/og-image.png"
+    [ -f "$TMP/out.png" ] || { echo "Chrome produced no image for $1"; exit 1; }
+    mv "$TMP/out.png" "$ROOT/$4"
+    sips -g pixelWidth -g pixelHeight "$ROOT/$4"
+    echo "wrote $ROOT/$4"
+}
+
+# With "x", the X profile header instead: it is uploaded by hand, not served.
+if [ "$1" = "x" ]; then
+    render x-header-source.html 1500 500 tools/x-header.png
+else
+    render og-source.html 1200 630 og-image.png
+fi
