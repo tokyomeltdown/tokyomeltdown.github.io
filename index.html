@@ -31,6 +31,8 @@
   h2{font-size:13px;font-weight:600;color:#6DD498;margin-bottom:18px}
   section{padding:0 0 88px}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+  /* A section with fewer cards than a row keeps the same card width. */
+  .grid.keep{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px;
     text-decoration:none;display:block;transition:.2s}
   .card:hover{border-color:rgba(255,255,255,.24);background:#131316}
@@ -50,12 +52,12 @@
 
 <header><div class="wrap">
   <h1>Mac tools for people<br>who work with sound.</h1>
-  <p class="lede">Small, focused apps and plug-ins for mix engineers, producers and podcasters. Each one does a single thing and stays out of the way.</p>
+  <p class="lede">Small, focused plugins and apps for mix engineers, producers and podcasters. Each one does a single thing and stays out of the way.</p>
 </div></header>
 
 <section><div class="wrap">
-  <h2>Apps &amp; plug-ins</h2>
-  <div class="grid">
+  <h2>Plugins</h2>
+  <div class="grid keep">
 
     <a class="card" href="https://tokyomeltdown.github.io/eq-mirror/">
       <span class="tag">$18 · 14-day free trial</span>
@@ -63,6 +65,13 @@
       <p>Analog, made visible. Put one before your EQ and one after it, and see the curve it's really applying. No knobs, no buttons, nothing to set up.</p>
       <p class="meta">AU · VST3 · AAX · macOS 12+ · Apple silicon &amp; Intel</p>
     </a>
+
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Apps</h2>
+  <div class="grid">
 
     <a class="card" href="https://tokyomeltdown.github.io/capsrec/">
       <span class="tag">$9 · 14-day free trial</span>
