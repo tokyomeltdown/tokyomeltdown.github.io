@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>tokyomeltdown — Mac tools for people who work with sound</title>
 <meta name="description" content="Small, focused macOS tools for mix engineers, producers and podcasters — EQ Mirror, caps REC, LUFSBar Pro, LUFSBar and VOX Normalizer. Mixing and vocal editing also taken on. ミックス・ボーカル編集の依頼も承ります。">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#eceef0">
 <link rel="canonical" href="https://tokyomeltdown.github.io/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="tokyomeltdown — Mac tools for people who work with sound">
@@ -17,115 +17,552 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="tokyomeltdown — Mac tools for people who work with sound">
 <meta name="twitter:card" content="summary_large_image">
+<script>document.documentElement.className='js'</script>
 <style>
-  :root{--bg:#000;--panel:#0D0D0F;--line:rgba(255,255,255,.10);--fg:#F5F5F7;--fg2:#86868B;--fg3:#6E6E73;--led:#31D158}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--fg);font-size:17px;line-height:1.6;letter-spacing:.004em;
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Hiragino Sans","Noto Sans JP",sans-serif;
-    -webkit-font-smoothing:antialiased}
-  a{color:inherit}
-  .wrap{max-width:940px;margin:0 auto;padding:0 28px}
-  header{padding:120px 0 72px}
-  h1{font-size:clamp(34px,5vw,60px);line-height:1.08;letter-spacing:-.03em;font-weight:600}
-  .lede{margin-top:20px;max-width:30em;font-size:21px;line-height:1.42;color:var(--fg2)}
-  h2{font-size:13px;font-weight:600;color:#6DD498;margin-bottom:18px}
-  section{padding:0 0 88px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
-  /* A section with fewer cards than a row keeps the same card width. */
-  .grid.keep{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px;
-    text-decoration:none;display:block;transition:.2s}
-  .card:hover{border-color:rgba(255,255,255,.24);background:#131316}
-  .card h3{font-size:21px;font-weight:600;letter-spacing:-.015em}
-  .card p{margin-top:10px;font-size:15px;color:var(--fg2)}
-  .meta{margin-top:16px;font-size:13px;color:var(--fg3)}
-  .tag{display:inline-block;font-size:12px;font-weight:600;color:#06210F;background:var(--led);
-    border-radius:980px;padding:2px 10px;margin-bottom:12px}
-  .tag.free{background:rgba(255,255,255,.14);color:var(--fg)}
-  footer{border-top:1px solid var(--line);padding:44px 0 72px;color:var(--fg3);font-size:13px}
-  footer a{color:var(--fg2);text-decoration:none;margin-right:20px}
-  footer a:hover{color:var(--fg)}
-  a:focus-visible{outline:2px solid var(--led);outline-offset:4px;border-radius:8px}
+/*
+  The hub, drawn in the language of the EQ Mirror page: the product's light
+  grey, its ink, its two colours for boost and cut, and a grain over the top.
+  The catalogue below the signal is laid out like a technical plate: a fine
+  grid, figure numbers, monospaced labels.
+*/
+:root{
+  --bg:#eceef0; --plate:#f1f2f3; --ink:#1b1f23; --curve:#2b3238; --sub:#5d646c; --muted:#878e96;
+  --line:rgba(60,66,72,.14); --hair:rgba(60,66,72,.07);
+  --boost:#c86a4f; --cut:#2f9088; --rec:#e2543f;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;background:var(--bg)}
+body{background:var(--bg);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue","Hiragino Sans","Noto Sans JP",sans-serif}
+a{color:inherit;text-decoration:none}
+[id]{scroll-margin-top:96px}
+.mono{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--muted)}
+
+.grain{position:fixed;inset:-50%;z-index:50;pointer-events:none;opacity:.055;mix-blend-mode:multiply;animation:grain .9s steps(6) infinite;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
+
+/* ---------------- top bar ---------------- */
+.top{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;
+  padding:16px 28px;transition:background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent}
+.top.solid{background:rgba(236,238,240,.78);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-color:var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;letter-spacing:-.02em}
+.brand svg{width:22px;height:20px}
+nav{display:flex;align-items:center;gap:22px}
+nav a{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--sub);transition:color .2s}
+nav a:hover{color:var(--ink)}
+nav svg{width:13px;height:13px;fill:currentColor;vertical-align:-2px}
+
+/* ---------------- hero: the signal ---------------- */
+.hero{position:relative;height:100vh;height:100svh;min-height:600px;overflow:hidden}
+#sig{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair}
+.hero .corner{position:absolute;z-index:3;pointer-events:none}
+.c-tl{top:72px;left:28px}.c-tr{top:72px;right:28px;text-align:right}
+.c-bl{bottom:22px;left:28px}.c-br{bottom:22px;right:28px;text-align:right}
+.rec{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--rec);margin-right:8px;vertical-align:1px;animation:blink 1.2s steps(2) infinite}
+@keyframes blink{50%{opacity:.15}}
+.hero h1{position:absolute;z-index:3;left:28px;right:28px;top:20vh;pointer-events:none;
+  font-size:clamp(46px,9.2vw,150px);font-weight:700;letter-spacing:-.05em;line-height:.94}
+.hero h1 .ln{display:block;overflow:hidden;padding-bottom:.06em}
+.hero h1 .w{display:inline-block}
+.hero h1 em{font-style:normal;color:var(--boost)}
+.lede{position:absolute;z-index:3;left:28px;bottom:clamp(64px,13vh,140px);max-width:27em;pointer-events:none;
+  font-size:clamp(16px,1.5vw,20px);line-height:1.45;color:var(--sub)}
+.lede b{color:var(--ink);font-weight:600}
+.hint{position:absolute;z-index:3;right:28px;bottom:clamp(64px,13vh,140px);pointer-events:none;text-align:right}
+
+html.js .hero h1 .w{transform:translateY(105%);transition:transform 1.1s var(--ease)}
+html.js .hero.on h1 .w{transform:none}
+html.js .lede,html.js .hint,html.js .corner{opacity:0;transition:opacity 1.2s ease .9s}
+html.js .hero.on .lede,html.js .hero.on .hint,html.js .hero.on .corner{opacity:1}
+
+/* ---------------- the plate ---------------- */
+.plate{position:relative;margin:0 10px 10px;border:1px solid var(--line);background-color:var(--plate);
+  background-image:linear-gradient(var(--hair) 1px,transparent 1px),linear-gradient(90deg,var(--hair) 1px,transparent 1px),
+    linear-gradient(rgba(60,66,72,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(60,66,72,.05) 1px,transparent 1px);
+  background-size:24px 24px,24px 24px,120px 120px,120px 120px}
+.inner{max-width:1120px;margin:0 auto;padding:0 28px}
+.status{display:flex;flex-wrap:wrap;gap:6px 18px;padding:18px 0 14px;border-bottom:1px solid var(--line)}
+.status .on{color:#3f8f55}
+.status .on::before{content:"";display:inline-block;width:6px;height:6px;background:#3f8f55;border-radius:1px;margin-right:6px;vertical-align:1px}
+.status .sq::before{content:"";display:inline-block;width:6px;height:6px;background:var(--ink);margin-right:7px;vertical-align:1px}
+
+.sh{display:flex;justify-content:space-between;align-items:flex-end;margin:112px 0 22px}
+.sh h2{font-size:clamp(30px,3.6vw,46px);font-weight:600;letter-spacing:-.035em;line-height:1;margin-top:8px}
+.sh .count{text-align:right}
+
+/* a figure: a framed card with a header row, a drawing and a caption */
+.fig{display:flex;flex-direction:column;background:rgba(241,242,243,.86);border:1px solid var(--line);transition:border-color .3s,box-shadow .4s var(--ease),transform .4s var(--ease)}
+.fig:hover{border-color:rgba(60,66,72,.32);box-shadow:0 22px 50px -30px rgba(27,31,35,.35);transform:translateY(-2px)}
+.fig .fh{display:flex;justify-content:space-between;padding:9px 12px;border-bottom:1px solid var(--line)}
+.fig .fh.flat{padding:0 0 18px;border:0}
+.fig .fh .go{transition:color .2s,transform .3s var(--ease)}
+.fig:hover .fh .go{color:var(--ink);transform:translateX(3px)}
+.draw{position:relative;aspect-ratio:16/9;background:#e7e9eb;border-bottom:1px solid var(--line);overflow:hidden}
+.draw svg,.draw canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.cap{padding:22px 22px 24px;display:flex;flex-direction:column;flex:1}
+.cap h3{font-size:clamp(24px,2.4vw,32px);font-weight:600;letter-spacing:-.03em;line-height:1.05}
+.cap p{margin-top:10px;font-size:15px;line-height:1.55;color:var(--sub);max-width:34em}
+.price{margin-top:auto;padding-top:20px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.price b{font-size:21px;font-weight:600;letter-spacing:-.02em}
+.price .mono{font-size:11px}
+.meta{margin-top:8px;color:var(--sub)}
+.price .mono,.status{color:var(--sub)}
+
+.feature{display:grid;grid-template-columns:1.35fr 1fr}
+.feature .draw{aspect-ratio:auto;min-height:380px;border-bottom:0;border-right:1px solid var(--line)}
+.feature .cap{padding:30px 30px 30px}
+.feature .cap h3{font-size:clamp(34px,3.6vw,52px)}
+.feature .cap .say{margin-top:14px;font-size:clamp(19px,1.7vw,23px);line-height:1.3;color:var(--ink);letter-spacing:-.015em}
+.feature .cap .say em{font-style:normal;color:var(--boost)}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.work{display:grid;grid-template-columns:1fr 1.35fr}
+.work .draw{aspect-ratio:auto;min-height:260px;border-bottom:0;border-left:1px solid var(--line);order:2}
+
+/* ink drawings */
+.ink{fill:none;stroke:var(--curve);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.faint{fill:none;stroke:rgba(43,50,56,.22);stroke-width:1;stroke-linecap:round}
+.axis{fill:var(--muted);font-family:var(--mono);font-size:9px;letter-spacing:.06em}
+
+/* caps REC: the key goes down, the dot comes on, the take scrolls by */
+.key{transform-box:fill-box;transform-origin:50% 50%;animation:press 3.2s var(--ease) infinite}
+@keyframes press{0%,8%{transform:translateY(0)}12%,62%{transform:translateY(3px)}66%,100%{transform:translateY(0)}}
+.led{animation:led 3.2s steps(1) infinite}
+@keyframes led{0%,11%{fill:#c9cdd1}12%,64%{fill:#3fbf63}65%,100%{fill:#c9cdd1}}
+.recdot{animation:recd 3.2s steps(1) infinite}
+@keyframes recd{0%,11%{opacity:0}12%,64%{opacity:1}65%,100%{opacity:0}}
+.take{animation:take 3.2s linear infinite}
+@keyframes take{from{transform:translateX(0)}to{transform:translateX(-120px)}}
+
+/* LUFSBar: meter bars */
+.bar{transform-box:fill-box;transform-origin:50% 100%;animation:lvl 1.6s ease-in-out infinite alternate}
+@keyframes lvl{0%{transform:scaleY(.35)}50%{transform:scaleY(.9)}100%{transform:scaleY(.55)}}
+
+/* VOX Normalizer: uneven phrases settle to one level */
+.phr{transform-box:fill-box;transform-origin:50% 50%;animation:even 4.8s var(--ease) infinite}
+@keyframes even{0%,18%{transform:scaleY(var(--s))}45%,82%{transform:scaleY(1)}100%{transform:scaleY(var(--s))}}
+
+/* reveal on scroll */
+html.js .rv{opacity:0;transform:translateY(26px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+html.js .rv.in{opacity:1;transform:none}
+
+footer{padding:90px 0 40px}
+.end{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;border-top:1px solid var(--line);padding-top:18px}
+.links{display:flex;flex-wrap:wrap;gap:8px 22px}
+.links a{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--sub)}
+.links a:hover{color:var(--ink)}
+.links svg{width:13px;height:13px;fill:currentColor;vertical-align:-2px}
+a:focus-visible{outline:2px solid var(--boost);outline-offset:4px}
+
+@media (max-width:860px){
+  .feature,.work{grid-template-columns:1fr}
+  .feature .draw{min-height:260px;border-right:0;border-bottom:1px solid var(--line)}
+  .work .draw{order:0;border-left:0;border-bottom:1px solid var(--line);min-height:200px}
+  .grid{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  .top{padding:14px 16px}
+  nav{gap:14px} nav .opt{display:none}
+  .hero h1{left:16px;right:16px;top:17vh}
+  .lede{left:16px;right:16px}
+  .hint{display:none}
+  .c-tl{left:16px}.c-tr{right:16px}.c-bl{left:16px}.c-br{right:16px}
+  .c-tr{display:none}
+  .plate{margin:0 0 0;border-left:0;border-right:0}
+  .inner{padding:0 16px}
+  .sh{margin-top:80px}
+  .cap{padding:18px 16px 20px}
+  .feature .cap{padding:22px 16px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html.js .hero h1 .w,html.js .rv{transform:none;opacity:1}
+  html.js .lede,html.js .hint,html.js .corner{opacity:1}
+}
 </style>
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 
-<header><div class="wrap">
-  <h1>Mac tools for people<br>who work with sound.</h1>
-  <p class="lede">Small, focused plugins and apps for mix engineers, producers and podcasters. Each one does a single thing and stays out of the way.</p>
-</div></header>
+<header class="top" id="top">
+  <a class="brand" href="/" aria-label="tokyomeltdown">
+    <svg viewBox="-2 0 24 22" fill="none" stroke-linecap="round" aria-hidden="true">
+      <line x1="-1" y1="11" x2="21" y2="11" stroke="#3c4248" stroke-opacity=".3" stroke-width=".9"/>
+      <path d="M0 13 C4 13 6 19 10 19 C14 19 16 15 20 15" stroke="#1b1f23" stroke-opacity=".34" stroke-width="2.4"/>
+      <path d="M0 9 C4 9 6 3 10 3 C14 3 16 7 20 7" stroke="#2b3238" stroke-width="2.1"/>
+    </svg>
+    tokyomeltdown
+  </a>
+  <nav>
+    <a href="#plugins">plugins</a>
+    <a href="#apps">apps</a>
+    <a class="opt" href="#work">work</a>
+    <a href="https://x.com/tokyomeltdownJP" target="_blank" rel="noopener" aria-label="X (@tokyomeltdownJP)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+  </nav>
+</header>
 
-<section><div class="wrap">
-  <h2>Plugins</h2>
-  <div class="grid keep">
+<section class="hero" id="hero">
+  <canvas id="sig" aria-hidden="true"></canvas>
+  <div class="corner c-tl mono">stmt.00 — tokyo</div>
+  <div class="corner c-tr mono">fig.00 / signal</div>
+  <h1>
+    <span class="ln"><span class="w">Mac tools for people</span></span>
+    <span class="ln"><span class="w">who work with <em>sound.</em></span></span>
+  </h1>
+  <p class="lede">Small, focused plugins and apps for mix engineers, producers and podcasters. <b>Each one does a single thing and stays out of the way.</b></p>
+  <p class="hint mono">move across the line ↔</p>
+  <div class="corner c-bl mono">scroll</div>
+  <div class="corner c-br mono"><span class="rec"></span><span class="clock">00:00:00</span> jst</div>
+</section>
 
-    <a class="card" href="https://tokyomeltdown.github.io/eq-mirror/">
-      <span class="tag">$18 · 14-day free trial</span>
-      <h3>EQ Mirror</h3>
-      <p>Analog, made visible. Put one before your EQ and one after it, and see the curve it's really applying. No knobs, no buttons, nothing to set up.</p>
-      <p class="meta">AU · VST3 · AAX · macOS 12+ · Apple silicon &amp; Intel</p>
+<main class="plate">
+  <div class="inner">
+
+    <div class="status mono">
+      <span class="sq">sys.index</span><span>tokyomeltdown</span><span>plate</span><span class="on">run</span><span class="clock">00:00:00</span><span>fig.0006</span>
+    </div>
+
+    <!-- ===== plugins ===== -->
+    <div class="sh rv" id="plugins">
+      <div><div class="mono">catalog</div><h2>Plugins</h2></div>
+      <div class="count mono">01 item</div>
+    </div>
+
+    <a class="fig feature rv" href="https://tokyomeltdown.github.io/eq-mirror/">
+      <div class="draw"><canvas data-fx="eq" aria-hidden="true"></canvas></div>
+      <div class="cap">
+        <div class="fh flat mono"><span>fig.01 — plug-in</span><span class="go">view →</span></div>
+        <h3>EQ Mirror</h3>
+        <p class="say">Analog, <em>made visible.</em></p>
+        <p>Put one before your EQ and one after it, and see the curve it's really applying. No knobs, no buttons, nothing to set up.</p>
+        <div class="price"><b>$18</b><span class="mono">one-time · 14-day free trial</span></div>
+        <p class="meta mono">AU · VST3 · AAX · macOS 12+ · Apple silicon &amp; Intel</p>
+      </div>
     </a>
+
+    <!-- ===== apps ===== -->
+    <div class="sh rv" id="apps">
+      <div><div class="mono">catalog</div><h2>Apps</h2></div>
+      <div class="count mono">04 items</div>
+    </div>
+
+    <div class="grid">
+
+      <a class="fig rv" href="https://tokyomeltdown.github.io/capsrec/">
+        <div class="fh mono"><span>fig.02 — app</span><span class="go">view →</span></div>
+        <div class="draw">
+          <svg viewBox="0 0 320 180" aria-hidden="true">
+            <g class="key">
+              <rect x="96" y="40" width="128" height="74" rx="10" fill="#f6f7f8" stroke="rgba(43,50,56,.35)"/>
+              <rect x="96" y="108" width="128" height="10" rx="5" fill="rgba(43,50,56,.10)"/>
+              <circle class="led" cx="114" cy="58" r="4" fill="#c9cdd1"/>
+              <text x="112" y="100" class="axis" style="font-size:12px;fill:#2b3238">caps lock</text>
+            </g>
+            <circle class="recdot" cx="262" cy="34" r="5" fill="#e2543f"/>
+            <text class="recdot axis" x="246" y="38" text-anchor="end">REC</text>
+            <g style="clip-path:inset(0 0 0 0)">
+              <g class="take">
+                <path class="faint" d="M0 150 h600" />
+                <path class="ink" style="stroke-width:1.2" d="M0 150 l6 -6 l6 12 l6 -18 l6 22 l6 -10 l6 6 l6 -14 l6 18 l6 -8 l6 4 l6 -12 l6 16 l6 -20 l6 24 l6 -12 l6 6 l6 -6 l6 10 l6 -16 l6 4 l6 -6 l6 12 l6 -18 l6 22 l6 -10 l6 6 l6 -14 l6 18 l6 -8 l6 4 l6 -12 l6 16 l6 -20 l6 24 l6 -12 l6 6 l6 -6 l6 10 l6 -16 l6 4 l6 -6 l6 12 l6 -18 l6 22 l6 -10 l6 6 l6 -14 l6 18 l6 -8 l6 4 l6 -12 l6 16 l6 -20 l6 24 l6 -12 l6 6 l6 -6 l6 10 l6 -16 l6 4 l6 -6 l6 12 l6 -18 l6 22 l6 -10 l6 6 l6 -14 l6 18 l6 -8 l6 4 l6 -12 l6 16 l6 -20 l6 24 l6 -12 l6 6 l6 -6 l6 10 l6 -16 l6 4 l6 -6 l6 12 l6 -18 l6 22 l6 -10 l6 6 l6 -14 l6 18 l6 -8 l6 4 l6 -12 l6 16 l6 -20 l6 24 l6 -12 l6 6 l6 -6 l6 10 l6 -16 l6 4"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div class="cap">
+          <h3>caps REC</h3>
+          <p>Turn caps lock into your record button. Records your screen, the sound your Mac is making and your microphone into one file — with no virtual audio driver.</p>
+          <div class="price"><b>$9</b><span class="mono">14-day free trial</span></div>
+          <p class="meta mono">macOS 15+ · Apple silicon &amp; Intel</p>
+        </div>
+      </a>
+
+      <a class="fig rv" href="https://tokyomeltdown.github.io/lufsbar-pro/">
+        <div class="fh mono"><span>fig.03 — app</span><span class="go">view →</span></div>
+        <div class="draw">
+          <svg viewBox="0 0 320 180" aria-hidden="true">
+            <path class="faint" d="M20 22 H300"/>
+            <path d="M118 22 h84 v14 a14 14 0 0 1 -14 14 h-56 a14 14 0 0 1 -14 -14z" fill="#1b1f23"/>
+            <text x="160" y="41" text-anchor="middle" style="font-family:var(--mono);font-size:11px;fill:#f1f2f3;letter-spacing:.04em"><tspan class="lufs">−14.0</tspan> LUFS</text>
+            <g transform="translate(40 92)">
+              <rect class="slot" x="0"   y="0" width="40" height="44" rx="4" fill="none" stroke="rgba(43,50,56,.3)"/>
+              <rect class="slot" x="50"  y="0" width="40" height="44" rx="4" fill="none" stroke="rgba(43,50,56,.3)"/>
+              <rect class="slot" x="100" y="0" width="40" height="44" rx="4" fill="none" stroke="rgba(43,50,56,.3)"/>
+              <rect class="slot" x="150" y="0" width="40" height="44" rx="4" fill="none" stroke="rgba(43,50,56,.3)"/>
+              <rect class="slot" x="200" y="0" width="40" height="44" rx="4" fill="none" stroke="rgba(43,50,56,.3)"/>
+              <text x="20" y="27" text-anchor="middle" class="axis">AU 1</text>
+              <text x="70" y="27" text-anchor="middle" class="axis">AU 2</text>
+              <text x="120" y="27" text-anchor="middle" class="axis">AU 3</text>
+              <text x="170" y="27" text-anchor="middle" class="axis">AU 4</text>
+              <text x="220" y="27" text-anchor="middle" class="axis">AU 5</text>
+              <path class="faint" d="M0 62 H240"/>
+              <text x="0" y="78" class="axis">system audio → inserts → bs.1770</text>
+            </g>
+          </svg>
+        </div>
+        <div class="cap">
+          <h3>LUFSBar Pro</h3>
+          <p>Puts up to five Audio Units into the sound your Mac is playing, and reads the result as BS.1770 loudness. The reading lives in the notch, so it costs no menu bar room.</p>
+          <div class="price"><b>$12</b><span class="mono">14-day free trial</span></div>
+          <p class="meta mono">macOS 14.4+ · Apple silicon &amp; Intel</p>
+        </div>
+      </a>
+
+      <a class="fig rv" href="https://tokyomeltdown.github.io/LUFSBar/">
+        <div class="fh mono"><span>fig.04 — app</span><span class="go">view →</span></div>
+        <div class="draw">
+          <svg viewBox="0 0 320 180" aria-hidden="true">
+            <rect x="0" y="16" width="320" height="22" fill="rgba(246,247,248,.9)"/>
+            <path class="faint" d="M0 38 H320"/>
+            <circle cx="20" cy="27" r="4" fill="#2b3238"/>
+            <text x="34" y="31" class="axis" style="fill:#5d646c">File  Edit  View</text>
+            <text x="300" y="31" text-anchor="end" style="font-family:var(--mono);font-size:11px;fill:#1b1f23"><tspan class="lufs2">−16.2</tspan> LUFS</text>
+            <g transform="translate(60 62)">
+              <rect class="bar" x="0"   y="0" width="14" height="80" fill="#2b3238" style="animation-delay:-.2s"/>
+              <rect class="bar" x="22"  y="0" width="14" height="80" fill="#2b3238" style="animation-delay:-.9s"/>
+              <rect class="bar" x="44"  y="0" width="14" height="80" fill="#2b3238" style="animation-delay:-.5s"/>
+              <rect class="bar" x="66"  y="0" width="14" height="80" fill="#2b3238" style="animation-delay:-1.3s"/>
+              <rect class="bar" x="88"  y="0" width="14" height="80" fill="#2f9088" style="animation-delay:-.7s"/>
+              <path class="faint" d="M-10 80 H200" />
+              <path d="M-10 22 H200" stroke="#c86a4f" stroke-dasharray="3 4" stroke-width="1"/>
+              <text x="200" y="18" text-anchor="end" class="axis" style="fill:#c86a4f">−14 spotify</text>
+            </g>
+          </svg>
+        </div>
+        <div class="cap">
+          <h3>LUFSBar</h3>
+          <p>The same meter without the inserts. Reads Apple Music, Spotify, YouTube and your DAW in real time, from the menu bar. No BlackHole required.</p>
+          <div class="price"><b>Free</b><span class="mono">open source · MIT</span></div>
+          <p class="meta mono">macOS 14.4+ · Apple silicon &amp; Intel</p>
+        </div>
+      </a>
+
+      <a class="fig rv" href="https://tokyomeltdown.github.io/VOX-Normalizer/">
+        <div class="fh mono"><span>fig.05 — app</span><span class="go">view →</span></div>
+        <div class="draw">
+          <svg viewBox="0 0 320 180" aria-hidden="true">
+            <path d="M20 90 H300" stroke="#c86a4f" stroke-dasharray="3 4" stroke-width="1"/>
+            <text x="300" y="58" text-anchor="end" class="axis" style="fill:#c86a4f">target</text>
+            <g fill="#2b3238">
+              <rect class="phr" x="30"  y="66" width="38" height="48" rx="3" style="--s:.45"/>
+              <rect class="phr" x="78"  y="66" width="52" height="48" rx="3" style="--s:1.55"/>
+              <rect class="phr" x="140" y="66" width="30" height="48" rx="3" style="--s:.7"/>
+              <rect class="phr" x="180" y="66" width="46" height="48" rx="3" style="--s:1.3"/>
+              <rect class="phr" x="236" y="66" width="54" height="48" rx="3" style="--s:.55"/>
+            </g>
+            <text x="20" y="160" class="axis">phrase by phrase · static clip gain</text>
+          </svg>
+        </div>
+        <div class="cap">
+          <h3>VOX Normalizer</h3>
+          <p>Evens out the phrase-by-phrase level differences in a vocal take and gives you back one file. Static clip gain, not a level rider — and no DAW required.</p>
+          <div class="price"><b>Free</b><span class="mono">open source · AGPLv3</span></div>
+          <p class="meta mono">macOS · Apple silicon &amp; Intel</p>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- ===== work ===== -->
+    <div class="sh rv" id="work">
+      <div><div class="mono">service</div><h2>Work</h2></div>
+      <div class="count mono">01 item</div>
+    </div>
+
+    <a class="fig work rv" href="/mix/">
+      <div class="draw">
+        <svg viewBox="0 0 400 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <g class="faint">
+            <path d="M30 40  C140 40 180 110 260 110"/>
+            <path d="M30 75  C140 75 180 110 260 110"/>
+            <path d="M30 110 C140 110 180 110 260 110"/>
+            <path d="M30 145 C140 145 180 110 260 110"/>
+            <path d="M30 180 C140 180 180 110 260 110"/>
+          </g>
+          <g class="axis"><text x="30" y="34">drums</text><text x="30" y="69">bass</text><text x="30" y="104">keys</text><text x="30" y="139">vox</text><text x="30" y="174">fx</text></g>
+          <path class="ink" d="M260 110 H370"/>
+          <circle cx="260" cy="110" r="4" fill="#c86a4f"/>
+          <text x="370" y="100" text-anchor="end" class="axis">mix</text>
+        </svg>
+      </div>
+      <div class="cap">
+        <div class="fh flat mono"><span>fig.06 — service</span><span class="go">view →</span></div>
+        <h3>Mixing &amp; vocal editing</h3>
+        <p>I mix records — that's where these apps came from. Para, stem or inst + vocal, plus the vocal editing that comes before it. Send me a song.</p>
+        <div class="price"><b>From ¥15,000</b><span class="mono">per song</span></div>
+        <p class="meta mono">日本語 / English · tokyomeltdown.ai@gmail.com</p>
+      </div>
+    </a>
+
+    <footer>
+      <div class="end">
+        <div class="links">
+          <a href="/mix/">mixing</a>
+          <a href="/mix/ja/">日本語</a>
+          <a href="https://github.com/tokyomeltdown">github</a>
+          <a href="mailto:tokyomeltdown.ai@gmail.com">contact</a>
+          <a href="https://x.com/tokyomeltdownJP" target="_blank" rel="noopener" aria-label="X (@tokyomeltdownJP)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        </div>
+        <div class="mono">© 2026 tokyomeltdown · tokyo — end of plate</div>
+      </div>
+    </footer>
 
   </div>
-</div></section>
+</main>
 
-<section><div class="wrap">
-  <h2>Apps</h2>
-  <div class="grid">
+<script>
+(function(){
+  var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var INK='#2b3238', BOOST='200,106,79', CUT='47,144,136';
 
-    <a class="card" href="https://tokyomeltdown.github.io/capsrec/">
-      <span class="tag">$9 · 14-day free trial</span>
-      <h3>caps REC</h3>
-      <p>Turn caps lock into your record button. Records your screen, the sound your Mac is making and your microphone into one file — with no virtual audio driver.</p>
-      <p class="meta">macOS 15+ · Apple silicon &amp; Intel</p>
-    </a>
+  /* ---- clock (Tokyo) ---- */
+  var clocks=document.querySelectorAll('.clock');
+  function tick(){
+    var t=new Date(Date.now()+ (9*60 + new Date().getTimezoneOffset())*60000);
+    var s=[t.getHours(),t.getMinutes(),t.getSeconds()].map(function(n){return (n<10?'0':'')+n}).join(':');
+    for(var i=0;i<clocks.length;i++) clocks[i].textContent=s;
+  }
+  tick(); setInterval(tick,1000);
 
-    <a class="card" href="https://tokyomeltdown.github.io/lufsbar-pro/">
-      <span class="tag">$12 · 14-day free trial</span>
-      <h3>LUFSBar Pro</h3>
-      <p>Puts up to five Audio Units into the sound your Mac is playing, and reads the result as BS.1770 loudness. The reading lives in the notch, so it costs no menu bar room.</p>
-      <p class="meta">macOS 14.4+ · Apple silicon &amp; Intel</p>
-    </a>
+  /* ---- top bar turns solid once the signal is behind us ---- */
+  var top=document.getElementById('top'), hero=document.getElementById('hero');
+  function onScroll(){ top.classList.toggle('solid', window.scrollY > hero.offsetHeight-80); }
+  addEventListener('scroll',onScroll,{passive:true}); onScroll();
 
-    <a class="card" href="https://tokyomeltdown.github.io/LUFSBar/">
-      <span class="tag free">Free · open source</span>
-      <h3>LUFSBar</h3>
-      <p>The same meter without the inserts. Reads Apple Music, Spotify, YouTube and your DAW in real time, from the menu bar. No BlackHole required.</p>
-      <p class="meta">macOS 14.4+ · Apple silicon &amp; Intel · MIT</p>
-    </a>
+  /* ---- reveal ---- */
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ hero.classList.add('on'); }); });
+  var rv=document.querySelectorAll('.rv');
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });},{rootMargin:'0px 0px -8% 0px'});
+    rv.forEach(function(el){io.observe(el)});
+  } else rv.forEach(function(el){el.classList.add('in')});
 
-    <a class="card" href="https://tokyomeltdown.github.io/VOX-Normalizer/">
-      <span class="tag free">Free · open source</span>
-      <h3>VOX Normalizer</h3>
-      <p>Evens out the phrase-by-phrase level differences in a vocal take and gives you back one file. Static clip gain, not a level rider — and no DAW required.</p>
-      <p class="meta">macOS · Apple silicon &amp; Intel · AGPLv3</p>
-    </a>
+  /* ---- shared: draw an EQ curve the way the plug-in does ---- */
+  function bell(x,fx,g,w){ var d=(x-fx)/w; return g*Math.exp(-d*d*.5); }
+  function curveAt(x,p){ // x in 0..1 across 20 Hz..20 kHz
+    return bell(x,p.fx,p.g,p.w) + p.ls/(1+Math.exp((x-.18)*28)) + p.hs/(1+Math.exp(-(x-.82)*28));
+  }
+  function hz(x){ var f=20*Math.pow(1000,x); return f>=1000 ? (f/1000).toFixed(f>=10000?0:1)+' kHz' : Math.round(f)+' Hz'; }
 
-  </div>
-</div></section>
+  function drawCurve(ctx,W,H,y0,dbPx,p,opt){
+    var N=Math.max(120,Math.floor(W/3)), i, x, y, pts=[];
+    for(i=0;i<=N;i++){ x=i/N; pts.push([x*W, y0 - curveAt(x,p)*dbPx]); }
+    // fill: warm above the line, cool below
+    ['above','below'].forEach(function(side){
+      ctx.save(); ctx.beginPath(); ctx.rect(0, side==='above'?0:y0, W, side==='above'?y0:H-y0); ctx.clip();
+      ctx.beginPath(); ctx.moveTo(0,y0); pts.forEach(function(q){ctx.lineTo(q[0],q[1])}); ctx.lineTo(W,y0); ctx.closePath();
+      ctx.fillStyle='rgba('+(side==='above'?BOOST:CUT)+','+(opt.fill||.16)+')'; ctx.fill(); ctx.restore();
+    });
+    // reflection
+    if(opt.mirror){
+      ctx.beginPath(); pts.forEach(function(q,k){ var ry=y0+(y0-q[1]); k?ctx.lineTo(q[0],ry):ctx.moveTo(q[0],ry); });
+      ctx.strokeStyle='rgba(27,31,35,.16)'; ctx.lineWidth=opt.lw*1.15; ctx.stroke();
+    }
+    // the line itself
+    ctx.beginPath(); pts.forEach(function(q,k){ k?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]); });
+    ctx.strokeStyle=INK; ctx.lineWidth=opt.lw; ctx.lineJoin='round'; ctx.lineCap='round'; ctx.stroke();
+    // tag at the largest move
+    if(opt.tag){
+      var best=0, bx=0;
+      for(i=0;i<=N;i++){ var v=curveAt(i/N,p); if(Math.abs(v)>Math.abs(best)){best=v;bx=i/N;} }
+      if(Math.abs(best)>.25){
+        var tx=bx*W, ty=y0-best*dbPx, up=best>0;
+        ctx.fillStyle=INK; ctx.beginPath(); ctx.arc(tx,ty,opt.lw*1.6,0,7); ctx.fill();
+        ctx.font=(opt.font||12)+'px ui-monospace,SFMono-Regular,Menlo,monospace';
+        var label=(up?'+':'−')+Math.abs(best).toFixed(1)+' dB  '+hz(bx), tw=ctx.measureText(label).width;
+        var left=tx+12+tw > W-10;
+        ctx.fillStyle='rgba('+(up?BOOST:CUT)+',1)'; ctx.textAlign=left?'right':'left';
+        ctx.fillText(label, left?Math.max(tw+10,tx-12):tx+12, ty+(up?-12:20));
+      }
+    }
+  }
 
-<section><div class="wrap">
-  <h2>Work</h2>
-  <div class="grid">
+  function axis(ctx,W,H,y0,font){
+    ctx.strokeStyle='rgba(60,66,72,.20)'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,y0); ctx.lineTo(W,y0); ctx.stroke();
+    ctx.font=font+'px ui-monospace,SFMono-Regular,Menlo,monospace'; ctx.fillStyle='rgba(135,142,150,.9)'; ctx.textAlign='center';
+    [[50,'50'],[100,'100'],[200,'200'],[500,'500'],[1000,'1k'],[2000,'2k'],[5000,'5k'],[10000,'10k']].forEach(function(t){
+      var x=Math.log(t[0]/20)/Math.log(1000)*W;
+      ctx.strokeStyle='rgba(60,66,72,.07)'; ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
+      ctx.fillText(t[1],x,H-10);
+    });
+  }
 
-    <a class="card" href="/mix/">
-      <span class="tag">From ¥15,000 · per song</span>
-      <h3>Mixing &amp; vocal editing</h3>
-      <p>I mix records — that's where these apps came from. Para, stem or inst + vocal, plus the vocal editing that comes before it. Send me a song.</p>
-      <p class="meta">日本語 / English · <span style="color:#86868B">tokyomeltdown.ai@gmail.com</span></p>
-    </a>
+  /* ---- hero: the signal, then the curve under your pointer ---- */
+  var cv=document.getElementById('sig'), cx=cv.getContext('2d'), W,H,dpr;
+  function size(){ dpr=Math.min(2,window.devicePixelRatio||1); W=cv.clientWidth; H=cv.clientHeight; cv.width=W*dpr; cv.height=H*dpr; cx.setTransform(dpr,0,0,dpr,0,0); }
+  size(); addEventListener('resize',size);
 
-  </div>
-</div></section>
+  var p={fx:.55,g:4,w:.075,ls:-1.2,hs:1.4}, tgt={fx:.55,g:4}, lastMove=-1e9;
+  function setFromPointer(e){
+    var r=cv.getBoundingClientRect(), x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top);
+    var y0=H*.7, dbPx=Math.min(H*.026,W*.045);
+    tgt.fx=Math.min(.97,Math.max(.03,x)); tgt.g=Math.max(-9,Math.min(9,(y0-y)/dbPx)); lastMove=performance.now();
+  }
+  cv.addEventListener('pointermove',setFromPointer);
+  cv.addEventListener('pointerdown',setFromPointer);
 
-<footer><div class="wrap">
-  <a href="/mix/">Mixing</a>
-  <a href="/mix/ja/">日本語</a>
-  <a href="https://github.com/tokyomeltdown">GitHub</a>
-  <a href="mailto:tokyomeltdown.ai@gmail.com">Contact</a>
-  <a href="https://x.com/tokyomeltdownJP" target="_blank" rel="noopener" aria-label="X (@tokyomeltdownJP)"><svg viewBox="0 0 24 24" style="width:14px;height:14px;vertical-align:-2px;fill:currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-  <p style="margin-top:16px">© 2026 tokyomeltdown</p>
-</div></footer>
+  // Only draw what is on screen: both loops stop when their canvas scrolls away
+  // and start again when it comes back.
+  function watch(el,start){
+    if(still||!('IntersectionObserver' in window)) return {live:function(){return !still}};
+    var on=true, o={live:function(){return on}};
+    new IntersectionObserver(function(es){ var was=on; on=es[0].isIntersecting; if(on&&!was) start(); }).observe(el);
+    return o;
+  }
+  var heroLive=watch(cv,function(){ requestAnimationFrame(frame); });
 
+  var t0=performance.now();
+  function frame(now){
+    var t=(now-t0)/1000, y0=H*.7, dbPx=Math.min(H*.026,W*.045), lw=2.4*Math.min(1.8,Math.max(.75,W/1100));
+    if(now-lastMove>2200){ tgt.fx=.52+.3*Math.sin(t*.21); tgt.g=5.5*Math.sin(t*.33+.6); }
+    p.fx+=(tgt.fx-p.fx)*.08; p.g+=(tgt.g-p.g)*.08;
+    cx.clearRect(0,0,W,H);
+    axis(cx,W,H,y0,Math.max(9,Math.min(11,W/120)));
+    // the music, faint, scrolling under the curve
+    cx.strokeStyle='rgba(43,50,56,.10)'; cx.lineWidth=1; cx.beginPath();
+    for(var x=0;x<W;x+=3){
+      var k=x+t*90, a=(Math.sin(k*.013)*.5+.5)*(Math.sin(k*.0031+1.3)*.5+.5)*(.55+.45*Math.sin(k*.21)*Math.sin(k*.047));
+      var h=a*H*.16; cx.moveTo(x,y0-h); cx.lineTo(x,y0+h);
+    }
+    cx.stroke();
+    drawCurve(cx,W,H,y0,dbPx,p,{lw:lw,mirror:true,tag:true,fill:.15,font:Math.max(11,Math.min(14,W/95))});
+    if(heroLive.live()) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* ---- fig.01: the plug-in's own window, in miniature ---- */
+  var eq=document.querySelector('canvas[data-fx="eq"]');
+  if(eq){
+    var ex=eq.getContext('2d'), EW,EH, q={fx:.3,g:3,w:.09,ls:0,hs:0};
+    function esz(){ var d=Math.min(2,devicePixelRatio||1); EW=eq.clientWidth; EH=eq.clientHeight; eq.width=EW*d; eq.height=EH*d; ex.setTransform(d,0,0,d,0,0); }
+    esz(); addEventListener('resize',esz);
+    var scenes=[ {fx:.08,g:0,w:.1,ls:1.1,hs:.9}, {fx:.62,g:4.2,w:.06,ls:0,hs:0}, {fx:.2,g:-3.5,w:.12,ls:.6,hs:2.2}, {fx:.45,g:-2,w:.05,ls:-1.5,hs:0} ];
+    function eframe(now){
+      var t=now/1000, s=scenes[Math.floor(t/3.2)%scenes.length];
+      for(var k in s) q[k]+= (s[k]-q[k])*.06;
+      ex.clearRect(0,0,EW,EH);
+      ex.fillStyle='rgba(255,255,255,.35)'; ex.fillRect(0,0,EW,EH);
+      var y0=EH*.55, dbPx=EH*.045;
+      axis(ex,EW,EH,y0,9);
+      ex.font='10px ui-monospace,SFMono-Regular,Menlo,monospace'; ex.textAlign='left'; ex.fillStyle='rgba(135,142,150,.95)';
+      ex.fillText('EQ MIRROR · DOWNSTREAM', 14, 22); ex.textAlign='right'; ex.fillText('L/R  ·  thd 0.00 %', EW-14, 22);
+      drawCurve(ex,EW,EH,y0,dbPx,q,{lw:2.2*Math.min(1.4,Math.max(.75,EW/700)),mirror:false,tag:true,fill:.2,font:11});
+      if(eqLive.live()) requestAnimationFrame(eframe);
+    }
+    var eqLive=watch(eq,function(){ requestAnimationFrame(eframe); });
+    requestAnimationFrame(eframe);
+  }
+
+  /* ---- loudness numbers that breathe ---- */
+  var l1=document.querySelector('.lufs'), l2=document.querySelector('.lufs2');
+  if(!still) setInterval(function(){
+    var n=Date.now()/1000;
+    if(l1) l1.textContent='−'+(14+Math.sin(n*.9)*.6+Math.sin(n*2.3)*.2).toFixed(1);
+    if(l2) l2.textContent='−'+(16.2+Math.sin(n*.7)*.9).toFixed(1);
+  },250);
+})();
+</script>
 </body>
 </html>

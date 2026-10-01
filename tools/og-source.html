@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>og</title>
+<!--
+  Source for /og-image.png, the card a shared link shows. Rendered rather than
+  drawn by hand so it keeps the page's colours when they change:
+
+      bash tools/make-og.sh
+
+  It repeats the top of the page: the headline over the line, one bell lifted
+  out of it, and its reflection. 1200x630 is what the cards crop to; the type
+  sits well inside it so a thumbnail still reads.
+-->
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  body{background:#eceef0;color:#1b1f23;position:relative;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased}
+  .grid{position:absolute;inset:0;
+    background-image:linear-gradient(rgba(60,66,72,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(60,66,72,.06) 1px,transparent 1px);
+    background-size:24px 24px}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:15px;letter-spacing:.08em;color:#5d646c}
+  .brand{position:absolute;left:64px;top:52px;display:flex;align-items:center;gap:12px;font-size:24px;font-weight:700;letter-spacing:-.02em}
+  .corner{position:absolute;right:64px;top:58px}
+  h1{position:absolute;left:60px;top:132px;font-size:86px;line-height:.95;font-weight:700;letter-spacing:-.05em}
+  h1 em{font-style:normal;color:#c86a4f}
+  svg.sig{position:absolute;left:0;top:0;width:1200px;height:630px}
+  .foot{position:absolute;left:64px;bottom:50px;right:64px;display:flex;justify-content:space-between}
+  .foot b{color:#1b1f23;font-weight:600}
+</style>
+</head>
+<body>
+<div class="grid"></div>
+<svg class="sig" viewBox="0 0 1200 630" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- 0 dB -->
+  <line x1="0" y1="440" x2="1200" y2="440" stroke="rgba(60,66,72,.22)" stroke-width="1"/>
+  <!-- boost fill, its reflection, then the line -->
+  <path d="M520 440 C640 440 700 330 780 330 C860 330 920 440 1040 440 C1120 440 1160 432 1200 430 L1200 440 Z" fill="rgba(200,106,79,.16)"/>
+  <path d="M0 452 C180 452 300 440 520 440 L520 440 L0 440 Z" fill="rgba(47,144,136,.16)"/>
+  <path d="M0 428 C180 428 300 440 520 440 C640 440 700 550 780 550 C860 550 920 440 1040 440 C1120 440 1160 448 1200 450" stroke="rgba(27,31,35,.16)" stroke-width="3.2"/>
+  <path d="M0 452 C180 452 300 440 520 440 C640 440 700 330 780 330 C860 330 920 440 1040 440 C1120 440 1160 432 1200 430" stroke="#2b3238" stroke-width="3.2"/>
+  <circle cx="780" cy="330" r="5" fill="#2b3238"/>
+  <text x="796" y="312" font-family="ui-monospace,SF Mono,Menlo,monospace" font-size="17" fill="#c86a4f">+5.2 dB  1.4 kHz</text>
+</svg>
+<div class="brand">
+  <svg width="30" height="27" viewBox="-2 0 24 22" fill="none" stroke-linecap="round">
+    <line x1="-1" y1="11" x2="21" y2="11" stroke="#3c4248" stroke-opacity=".3" stroke-width=".9"/>
+    <path d="M0 13 C4 13 6 19 10 19 C14 19 16 15 20 15" stroke="#1b1f23" stroke-opacity=".34" stroke-width="2.4"/>
+    <path d="M0 9 C4 9 6 3 10 3 C14 3 16 7 20 7" stroke="#2b3238" stroke-width="2.1"/>
+  </svg>
+  tokyomeltdown
+</div>
+<div class="corner mono">fig.00 / signal</div>
+<h1>Mac tools for people<br>who work with <em>sound.</em></h1>
+<div class="foot mono"><span><b>EQ Mirror</b> · caps REC · LUFSBar Pro · LUFSBar · VOX Normalizer</span><span>tokyo</span></div>
+</body>
+</html>
