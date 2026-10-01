@@ -68,7 +68,7 @@
   .stems .mix{fill:none;stroke:var(--curve);stroke-width:2.4;stroke-linecap:round}
   .stems text{font-family:var(--mono);font-size:11px;letter-spacing:.06em;fill:var(--muted)}
 
-  main.plate{display:block;margin:0 10px 10px;border:1px solid var(--line);background-color:var(--plate);
+  main.plate{display:block;border-top:1px solid var(--line);background-color:var(--plate);
     background-image:linear-gradient(var(--hair) 1px,transparent 1px),linear-gradient(90deg,var(--hair) 1px,transparent 1px),
       linear-gradient(rgba(60,66,72,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(60,66,72,.05) 1px,transparent 1px);
     background-size:24px 24px,24px 24px,120px 120px,120px 120px;padding-top:24px}
@@ -111,7 +111,6 @@
   @media (max-width:620px){
     .wrap{padding:0 16px}
     header{padding:84px 0 56px}
-    main.plate{margin:0;border-left:0;border-right:0}
     .row{grid-template-columns:1fr;padding:20px 16px}
     .price{text-align:left}
     .contact{padding:28px 16px}
