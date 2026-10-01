@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>icon</title>
+<!--
+  Source for the square marks: /apple-touch-icon.png (180) and the X profile
+  picture (400, tools/x-avatar.png, uploaded by hand). Drawn at 500, because
+  headless Chrome will not open a window narrower than that, and scaled down.
+  Both come from
+
+      bash tools/make-og.sh icons
+
+  The mark is the tokyomeltdown mark, first drawn for EQ Mirror: a curve, its
+  reflection at a third of the strength, and the line of the mirror between
+  them, on the 22 x 22 grid the plug-in uses. It sits in the middle 56 % so
+  that X's circle and iOS's rounded square both leave it whole. The strokes
+  are heavier than on the page because these are seen at 32 to 48 pixels.
+-->
+<style>
+  *{margin:0;padding:0}
+  html,body{width:500px;height:500px;overflow:hidden;background:#eceef0}
+  .glow{position:fixed;inset:0;background:radial-gradient(42% 38% at 40% 36%,rgba(200,106,79,.12),transparent 70%),radial-gradient(42% 38% at 60% 66%,rgba(47,144,136,.12),transparent 70%)}
+  svg{position:fixed;left:110px;top:110px;width:280px;height:280px}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<svg viewBox="-2 0 24 22" preserveAspectRatio="xMidYMid meet" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="-1" y1="11" x2="21" y2="11" stroke="#3c4248" stroke-opacity=".3" stroke-width=".9"/>
+  <path d="M0 13 C4 13 6 19 10 19 C14 19 16 15 20 15" stroke="#1b1f23" stroke-opacity=".34" stroke-width="1.8"/>
+  <path d="M0 9 C4 9 6 3 10 3 C14 3 16 7 20 7" stroke="#2b3238" stroke-width="1.6"/>
+</svg>
+</body>
+</html>

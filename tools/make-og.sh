@@ -1,6 +1,6 @@
 #!/bin/bash
 # Renders tools/og-source.html to /og-image.png at 1200x630, the size the
-# social cards use, or with "x" the X profile header at 1500x500.
+# social cards use; "x" and "icons" render the X header and the square marks.
 #
 # Chrome rather than a screenshot tool, because the size has to be exact: a
 # card that is a pixel off gets rescaled and the type goes soft.
@@ -30,8 +30,15 @@ render () {   # source, width, height, output
 }
 
 # With "x", the X profile header instead: it is uploaded by hand, not served.
+# With "icons", the home screen icon and the X profile picture.
 if [ "$1" = "x" ]; then
     render x-header-source.html 1500 500 tools/x-header.png
+elif [ "$1" = "icons" ]; then
+    render icon-source.html 500 500 tools/x-avatar.png
+    cp "$ROOT/tools/x-avatar.png" "$ROOT/apple-touch-icon.png"
+    sips -z 400 400 "$ROOT/tools/x-avatar.png" >/dev/null
+    sips -z 180 180 "$ROOT/apple-touch-icon.png" >/dev/null
+    echo "scaled to 400 and 180"
 else
     render og-source.html 1200 630 og-image.png
 fi
