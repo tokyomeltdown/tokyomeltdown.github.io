@@ -4,8 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>tokyomeltdown — Mac tools for people who work with sound</title>
-<meta name="description" content="Small, focused macOS tools for mix engineers, producers and podcasters — EQ Mirror, caps REC, LUFSBar Pro, LUFSBar and VOX Normalizer. Mixing and vocal editing also taken on. ミックス・ボーカル編集の依頼も承ります。">
+<meta name="description" content="Small, focused macOS tools for mix engineers, producers and podcasters — EQ Mirror, Comp Mirror, caps REC, LUFSBar Pro, LUFSBar and VOX Normalizer. Mixing and vocal editing also taken on. ミックス・ボーカル編集の依頼も承ります。">
 <meta name="theme-color" content="#eceef0">
+<script>
+/* Comp Mirror's launch price, the same switch as its landing page: 08:00 UTC on 9 December is the end of 8 December in California.
+   Once it has passed, this script and the .free markup can go. */
+(function(){ if (Date.now() < Date.UTC(2026, 11, 9, 8, 0, 0)) document.documentElement.classList.add('is-free'); })();
+</script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="canonical" href="https://tokyomeltdown.github.io/">
@@ -19,7 +24,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="tokyomeltdown — Mac tools for people who work with sound">
 <meta name="twitter:card" content="summary_large_image">
-<script>document.documentElement.className='js'</script>
+<script>document.documentElement.classList.add('js')</script>
 <style>
 /*
   The hub, drawn in the language of the EQ Mirror page: the product's light
@@ -110,6 +115,12 @@ html.js .hero.on .lede,html.js .hero.on .hint,html.js .hero.on .corner{opacity:1
 .price .mono{color:var(--sub)}
 .feature{display:grid;grid-template-columns:1.35fr 1fr}
 .feature .draw{aspect-ratio:auto;min-height:380px;border-bottom:0;border-right:1px solid var(--line)}
+.feature.second{margin-top:18px}
+.price .paid,.price .free{display:contents}
+.price .free{display:none}
+html.is-free .price .free{display:contents}
+html.is-free .price .paid{display:none}
+.price .was{font-size:15px;color:var(--muted);text-decoration-color:var(--boost)}
 .feature .cap{padding:30px 30px 30px}
 .feature .cap h3{font-size:clamp(34px,3.6vw,52px)}
 .feature .cap .say{margin-top:14px;font-size:clamp(19px,1.7vw,23px);line-height:1.3;color:var(--ink);letter-spacing:-.015em}
@@ -232,7 +243,7 @@ a:focus-visible{outline:2px solid var(--boost);outline-offset:4px}
     <!-- ===== plugins ===== -->
     <div class="sh rv" id="plugins">
       <div><h2>Plugins</h2></div>
-      <div class="count mono">01 item</div>
+      <div class="count mono">02 items</div>
     </div>
 
     <a class="fig feature rv" href="https://tokyomeltdown.github.io/eq-mirror/">
@@ -243,6 +254,18 @@ a:focus-visible{outline:2px solid var(--boost);outline-offset:4px}
         <p class="say">Analog, <em>made visible.</em></p>
         <p>Load your EQ inside EQ Mirror Dock, or put one EQ Mirror before it and one after, and see the curve it's really applying. Nothing to set up.</p>
         <div class="price"><b>$18</b><span class="mono">one-time · 14-day free trial</span></div>
+        <p class="meta mono">AU · VST3 · AAX · macOS 12+ · Apple silicon &amp; Intel</p>
+      </div>
+    </a>
+
+    <a class="fig feature rv second" href="https://tokyomeltdown.github.io/comp-mirror/">
+      <div class="draw"><canvas data-fx="comp" aria-hidden="true"></canvas></div>
+      <div class="cap">
+        <p class="ch mono">ch.02 — plug-in</p>
+        <div class="ttl"><h3>Comp Mirror</h3><span class="go mono" aria-hidden="true">open →</span></div>
+        <p class="say">Compression, <em>understood.</em></p>
+        <p>Put one Comp Mirror before your compressor and one after, and see what it really does to every hit, measured from the sound. Nothing to set up.</p>
+        <div class="price"><span class="paid"><b>$18</b><span class="mono">one-time · 14-day free trial</span></span><span class="free"><s class="was">$18</s><b>Free</b><span class="mono">until December 8, then $18</span></span></div>
         <p class="meta mono">AU · VST3 · AAX · macOS 12+ · Apple silicon &amp; Intel</p>
       </div>
     </a>
@@ -275,7 +298,7 @@ a:focus-visible{outline:2px solid var(--boost);outline-offset:4px}
           </svg>
         </div>
         <div class="cap">
-          <p class="ch mono">ch.02 — app</p>
+          <p class="ch mono">ch.03 — app</p>
           <div class="ttl"><h3>caps REC</h3><span class="go mono" aria-hidden="true">open →</span></div>
           <p>Turn caps lock into your record button. Records your screen, the sound your Mac is making and your microphone into one file — with no virtual audio driver.</p>
           <div class="price"><b>$9</b><span class="mono">14-day free trial</span></div>
@@ -306,7 +329,7 @@ a:focus-visible{outline:2px solid var(--boost);outline-offset:4px}
           </svg>
         </div>
         <div class="cap">
-          <p class="ch mono">ch.03 — app</p>
+          <p class="ch mono">ch.04 — app</p>
           <div class="ttl"><h3>LUFSBar Pro</h3><span class="go mono" aria-hidden="true">open →</span></div>
           <p>Puts up to five Audio Units into the sound your Mac is playing, and reads the result as BS.1770 loudness. The reading lives in the notch, so it costs no menu bar room.</p>
           <div class="price"><b>$12</b><span class="mono">14-day free trial</span></div>
@@ -335,7 +358,7 @@ a:focus-visible{outline:2px solid var(--boost);outline-offset:4px}
           </svg>
         </div>
         <div class="cap">
-          <p class="ch mono">ch.04 — app</p>
+          <p class="ch mono">ch.05 — app</p>
           <div class="ttl"><h3>LUFSBar</h3><span class="go mono" aria-hidden="true">open →</span></div>
           <p>The same meter without the inserts. Reads what goes to your Mac's sound output in real time, from the menu bar. No virtual audio device.</p>
           <div class="price"><b>Free</b><span class="mono">open source · MIT</span></div>
@@ -359,7 +382,7 @@ a:focus-visible{outline:2px solid var(--boost);outline-offset:4px}
           </svg>
         </div>
         <div class="cap">
-          <p class="ch mono">ch.05 — app</p>
+          <p class="ch mono">ch.06 — app</p>
           <div class="ttl"><h3>VOX Normalizer</h3><span class="go mono" aria-hidden="true">open →</span></div>
           <p>Evens out the phrase-by-phrase level differences in a vocal take and gives you back one file. Static clip gain, not a level rider — and no DAW required.</p>
           <div class="price"><b>Free</b><span class="mono">open source · AGPLv3</span></div>
@@ -392,7 +415,7 @@ a:focus-visible{outline:2px solid var(--boost);outline-offset:4px}
         </svg>
       </div>
       <div class="cap">
-        <p class="ch mono">ch.06 — service</p>
+        <p class="ch mono">ch.07 — service</p>
         <div class="ttl"><h3>Mixing &amp; vocal editing</h3><span class="go mono" aria-hidden="true">open →</span></div>
         <p>I mix records — that's where these apps came from. Para, stem or inst + vocal, plus the vocal editing that comes before it. Send me a song.</p>
         <div class="price"><b>From ¥15,000</b><span class="mono">per song</span></div>
@@ -561,6 +584,77 @@ a:focus-visible{outline:2px solid var(--boost);outline-offset:4px}
     var eqLive=watch(eq,function(){ requestAnimationFrame(eframe); });
     requestAnimationFrame(eframe);
   }
+
+  /* ---- ch.02: Comp Mirror's window, in miniature. A drawing, worked out from the time alone: nothing here is measured ---- */
+  (function(){ // its own scope: the hero's canvas is cx and W out there
+  var cc=document.querySelector('canvas[data-fx="comp"]');
+  if(cc){
+    var cx=cc.getContext('2d'), CW,CH, BEAT=.5, ATT=.006, HOLD=.09, SHOWN=[4,2,6,4.5], WANT=SHOWN.slice(), LAST=-1;
+    function csz(){ var d=Math.min(2,devicePixelRatio||1); CW=cc.clientWidth; CH=cc.clientHeight; cc.width=CW*d; cc.height=CH*d; cx.setTransform(d,0,0,d,0,0); }
+    csz(); addEventListener('resize',csz);
+    function vary(k){ var x=Math.sin(k*12.9898)*43758.5453; return (x-Math.floor(x))*2-1; }
+    function rel(k){ return Math.floor(k/16)%2 ? .4 : .11; }              // two characters of compressor, eight seconds each
+    function depth(k){ return 6.2+1.5*vary(k); }
+    function hitGr(k,dt){ if(dt<0) return 0; var g=depth(k)*(1-Math.exp(-dt/ATT)); return dt<HOLD ? g : g*Math.exp(-(dt-HOLD)/rel(k)); }
+    function gr(t){ var k=Math.floor(t/BEAT), dt=t-k*BEAT; return Math.max(hitGr(k,dt),hitGr(k-1,dt+BEAT),hitGr(k-2,dt+2*BEAT)); }
+    function level(t){ var k=Math.floor(t/BEAT), dt=t-k*BEAT, a=(.72+.2*vary(k+40))*Math.exp(-dt/.17);
+      if(dt>BEAT/2) a=Math.max(a,(.34+.14*vary(k+90))*Math.exp(-(dt-BEAT/2)/.09)); return a+.03; }
+    function label(s,x,y,al){ cx.textAlign=al||'left'; cx.font='9px ui-monospace,SFMono-Regular,Menlo,monospace'; cx.fillStyle='rgba(135,142,150,.95)'; cx.fillText(s,x,y); }
+    function hline(x0,x1,y,a){ cx.strokeStyle='rgba(43,50,56,'+a+')'; cx.lineWidth=1; cx.beginPath(); cx.moveTo(x0,y); cx.lineTo(x1,y); cx.stroke(); }
+    function cframe(now){
+      var t=now/1000+40, k0=Math.floor(t/BEAT);
+      cx.clearRect(0,0,CW,CH); cx.fillStyle='rgba(255,255,255,.35)'; cx.fillRect(0,0,CW,CH);
+      var m=Math.max(14,CW*.03), split=CW*.68, top=64, sc=(CH-top-100)*.095, lx1=split-14, rx0=split+14, rx1=CW-m, base=CH-m;
+      // the name, and the mark
+      cx.save(); cx.translate(m,20); cx.strokeStyle='rgba(43,50,56,.75)'; cx.lineWidth=1.3; cx.lineCap='round';
+      cx.beginPath(); cx.moveTo(0,6); cx.bezierCurveTo(4,6,6,1,10,1); cx.bezierCurveTo(14,1,16,4,20,4); cx.stroke();
+      cx.strokeStyle='rgba(43,50,56,.3)'; cx.beginPath(); cx.moveTo(0,11); cx.bezierCurveTo(4,11,6,16,10,16); cx.bezierCurveTo(14,16,16,13,20,13); cx.stroke(); cx.restore();
+      if(CW>=400){ cx.textAlign='left'; cx.fillStyle='#1b1f23'; cx.font='600 13px -apple-system,BlinkMacSystemFont,sans-serif'; cx.fillText('Comp',m+28,33);
+        var nw=cx.measureText('Comp ').width; cx.fillStyle='#666d75'; cx.font='13px -apple-system,BlinkMacSystemFont,sans-serif'; cx.fillText('Mirror',m+28+nw,33); }
+      // the four numbers
+      var i, names=['AVG GR','CREST','DEPTH','PEAK SHAVE'], step=CW>560?84:Math.max(52,(CW-m*2-92)/4);
+      var tick=Math.floor(t*4); if(tick!=LAST){ LAST=tick; var dep=0,pk=0,avg=0,tt=tick/4;
+        for(i=1;i<=8;i++){ dep+=depth(k0-i); pk+=hitGr(k0-i,.008); } dep/=8; pk/=8;
+        for(i=0;i<80;i++) avg+=gr(tt-i*.05); avg/=80; WANT=[avg,dep-avg,dep,pk]; }
+      for(i=0;i<4;i++){ SHOWN[i]+=(WANT[i]-SHOWN[i])*.04; var nx=CW-m-(3-i)*step;
+        if(CW>430) label(names[i],nx,25,'right');
+        cx.textAlign='right'; cx.fillStyle='#1b1f23'; cx.font='600 14px -apple-system,BlinkMacSystemFont,sans-serif';
+        cx.fillText((i==1&&SHOWN[i]>=0?'+':'')+SHOWN[i].toFixed(1).replace('-','−'),nx,CW>430?43:34); }
+      // the gain reduction, and the music under it: the last four seconds, newest on the right
+      label('GAIN REDUCTION',m,top-8); label('HIT ENVELOPE',rx0,top-8);
+      hline(m,lx1,top,.3); hline(rx0,rx1,top,.3);
+      [6,12].forEach(function(d){ hline(m,lx1,top+d*sc,.1); hline(rx0,rx1,top+d*sc,.1); });
+      var W=lx1-m, x, u, g, y, musicH=Math.max(52,(base-top)*.3), COL=4/(W/2), first=Math.ceil((t-4)/COL), last=Math.floor(t/COL), n;
+      // Each column keeps its own moment in time and only slides left. Reading fresh moments every frame made the peaks shimmer.
+      function colX(n){ return m+W*(1-(t-n*COL)/4); }
+      function dbY(a){ return base-musicH*Math.pow(a,.55); }
+      cx.save(); cx.beginPath(); cx.rect(m,top-1,W,base-top+2); cx.clip();
+      cx.beginPath(); cx.moveTo(colX(first),top);
+      for(n=first;n<=last;n++) cx.lineTo(colX(n),top+gr(n*COL)*sc);
+      cx.lineTo(colX(last),top); cx.closePath(); cx.fillStyle='rgba(47,144,136,.14)'; cx.fill();
+      cx.beginPath(); for(n=first;n<=last;n++){ y=top+gr(n*COL)*sc; n>first?cx.lineTo(colX(n),y):cx.moveTo(colX(n),y); } cx.strokeStyle='#2b3238'; cx.lineWidth=1.7; cx.lineJoin='round'; cx.stroke();
+      cx.beginPath(); cx.moveTo(colX(first),base);
+      for(n=first;n<=last;n++){ u=n*COL; cx.lineTo(colX(n),dbY(level(u)*Math.pow(10,-gr(u)/20))); }
+      cx.lineTo(colX(last),base); cx.closePath(); cx.fillStyle='rgba(135,142,150,.28)'; cx.fill();
+      cx.beginPath();
+      for(n=first;n<=last;n++){ y=dbY(level(n*COL)); n>first?cx.lineTo(colX(n),y):cx.moveTo(colX(n),y); }
+      for(n=last;n>=first;n--){ u=n*COL; cx.lineTo(colX(n),dbY(level(u)*Math.pow(10,-gr(u)/20))); }
+      cx.closePath(); cx.fillStyle='rgba(47,144,136,.36)'; cx.fill();
+      cx.restore();
+      // the last sixteen hits, lined up where they start
+      var RW=rx1-rx0, PTS=36, mean=new Float32Array(PTS+1), j, h;
+      function ms(j){ return j<4 ? -1 : 5*(Math.pow(81,(j-4)/(PTS-4))-1)/1000; }   // a little before the hit, then 0 to 400 ms, wider at the start
+      cx.strokeStyle='rgba(47,144,136,.36)'; cx.lineWidth=1;
+      for(h=1;h<=16;h++){ cx.beginPath();
+        for(j=0;j<=PTS;j++){ g=hitGr(k0-h,ms(j)); mean[j]+=g/16; y=top+g*sc; x=rx0+RW*j/PTS; j?cx.lineTo(x,y):cx.moveTo(x,y); }
+        cx.stroke(); }
+      cx.beginPath(); for(j=0;j<=PTS;j++){ y=top+mean[j]*sc; x=rx0+RW*j/PTS; j?cx.lineTo(x,y):cx.moveTo(x,y); } cx.strokeStyle='#2b3238'; cx.lineWidth=2; cx.stroke();
+      if(cLive.live()) requestAnimationFrame(cframe);
+    }
+    var cLive=watch(cc,function(){ requestAnimationFrame(cframe); });
+    requestAnimationFrame(cframe);
+  }
+  })();
 
   /* ---- the sign-off mark: its bell rises and falls, and the reflection with it ---- */
   var mc=document.querySelector('.sign .m-curve'), mr=document.querySelector('.sign .m-refl');
