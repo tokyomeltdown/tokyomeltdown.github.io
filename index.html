@@ -585,75 +585,50 @@ a:focus-visible{outline:2px solid var(--boost);outline-offset:4px}
     requestAnimationFrame(eframe);
   }
 
-  /* ---- ch.02: Comp Mirror's window, in miniature. A drawing, worked out from the time alone: nothing here is measured ---- */
+  /* ---- ch.02: the shape of Comp Mirror's hits, drawn the way ch.01 draws its curve. A drawing, worked out from the time alone: nothing here is measured ---- */
   (function(){ // its own scope: the hero's canvas is cx and W out there
   var cc=document.querySelector('canvas[data-fx="comp"]');
-  if(cc){
-    var cx=cc.getContext('2d'), CW,CH, BEAT=.5, ATT=.006, HOLD=.09, SHOWN=[4,2,6,4.5], WANT=SHOWN.slice(), LAST=-1;
-    function csz(){ var d=Math.min(2,devicePixelRatio||1); CW=cc.clientWidth; CH=cc.clientHeight; cc.width=CW*d; cc.height=CH*d; cx.setTransform(d,0,0,d,0,0); }
-    csz(); addEventListener('resize',csz);
-    function vary(k){ var x=Math.sin(k*12.9898)*43758.5453; return (x-Math.floor(x))*2-1; }
-    function rel(k){ return Math.floor(k/16)%2 ? .4 : .11; }              // two characters of compressor, eight seconds each
-    function depth(k){ return 6.2+1.5*vary(k); }
-    function hitGr(k,dt){ if(dt<0) return 0; var g=depth(k)*(1-Math.exp(-dt/ATT)); return dt<HOLD ? g : g*Math.exp(-(dt-HOLD)/rel(k)); }
-    function gr(t){ var k=Math.floor(t/BEAT), dt=t-k*BEAT; return Math.max(hitGr(k,dt),hitGr(k-1,dt+BEAT),hitGr(k-2,dt+2*BEAT)); }
-    function level(t){ var k=Math.floor(t/BEAT), dt=t-k*BEAT, a=(.72+.2*vary(k+40))*Math.exp(-dt/.17);
-      if(dt>BEAT/2) a=Math.max(a,(.34+.14*vary(k+90))*Math.exp(-(dt-BEAT/2)/.09)); return a+.03; }
-    function label(s,x,y,al){ cx.textAlign=al||'left'; cx.font='9px ui-monospace,SFMono-Regular,Menlo,monospace'; cx.fillStyle='rgba(135,142,150,.95)'; cx.fillText(s,x,y); }
-    function hline(x0,x1,y,a){ cx.strokeStyle='rgba(43,50,56,'+a+')'; cx.lineWidth=1; cx.beginPath(); cx.moveTo(x0,y); cx.lineTo(x1,y); cx.stroke(); }
-    function cframe(now){
-      var t=now/1000+40, k0=Math.floor(t/BEAT);
-      cx.clearRect(0,0,CW,CH); cx.fillStyle='rgba(255,255,255,.35)'; cx.fillRect(0,0,CW,CH);
-      var m=Math.max(14,CW*.03), split=CW*.68, top=64, sc=(CH-top-100)*.095, lx1=split-14, rx0=split+14, rx1=CW-m, base=CH-m;
-      // the name, and the mark
-      cx.save(); cx.translate(m,20); cx.strokeStyle='rgba(43,50,56,.75)'; cx.lineWidth=1.3; cx.lineCap='round';
-      cx.beginPath(); cx.moveTo(0,6); cx.bezierCurveTo(4,6,6,1,10,1); cx.bezierCurveTo(14,1,16,4,20,4); cx.stroke();
-      cx.strokeStyle='rgba(43,50,56,.3)'; cx.beginPath(); cx.moveTo(0,11); cx.bezierCurveTo(4,11,6,16,10,16); cx.bezierCurveTo(14,16,16,13,20,13); cx.stroke(); cx.restore();
-      if(CW>=400){ cx.textAlign='left'; cx.fillStyle='#1b1f23'; cx.font='600 13px -apple-system,BlinkMacSystemFont,sans-serif'; cx.fillText('Comp',m+28,33);
-        var nw=cx.measureText('Comp ').width; cx.fillStyle='#666d75'; cx.font='13px -apple-system,BlinkMacSystemFont,sans-serif'; cx.fillText('Mirror',m+28+nw,33); }
-      // the four numbers
-      var i, names=['AVG GR','CREST','DEPTH','PEAK SHAVE'], step=CW>560?84:Math.max(52,(CW-m*2-92)/4);
-      var tick=Math.floor(t*4); if(tick!=LAST){ LAST=tick; var dep=0,pk=0,avg=0,tt=tick/4;
-        for(i=1;i<=8;i++){ dep+=depth(k0-i); pk+=hitGr(k0-i,.008); } dep/=8; pk/=8;
-        for(i=0;i<80;i++) avg+=gr(tt-i*.05); avg/=80; WANT=[avg,dep-avg,dep,pk]; }
-      for(i=0;i<4;i++){ SHOWN[i]+=(WANT[i]-SHOWN[i])*.04; var nx=CW-m-(3-i)*step;
-        if(CW>430) label(names[i],nx,25,'right');
-        cx.textAlign='right'; cx.fillStyle='#1b1f23'; cx.font='600 14px -apple-system,BlinkMacSystemFont,sans-serif';
-        cx.fillText((i==1&&SHOWN[i]>=0?'+':'')+SHOWN[i].toFixed(1).replace('-','−'),nx,CW>430?43:34); }
-      // the gain reduction, and the music under it: the last four seconds, newest on the right
-      label('GAIN REDUCTION',m,top-8); label('HIT ENVELOPE',rx0,top-8);
-      hline(m,lx1,top,.3); hline(rx0,rx1,top,.3);
-      [6,12].forEach(function(d){ hline(m,lx1,top+d*sc,.1); hline(rx0,rx1,top+d*sc,.1); });
-      var W=lx1-m, x, u, g, y, musicH=Math.max(52,(base-top)*.3), COL=4/(W/2), first=Math.ceil((t-4)/COL), last=Math.floor(t/COL), n;
-      // Each column keeps its own moment in time and only slides left. Reading fresh moments every frame made the peaks shimmer.
-      function colX(n){ return m+W*(1-(t-n*COL)/4); }
-      function dbY(a){ return base-musicH*Math.pow(a,.55); }
-      cx.save(); cx.beginPath(); cx.rect(m,top-1,W,base-top+2); cx.clip();
-      cx.beginPath(); cx.moveTo(colX(first),top);
-      for(n=first;n<=last;n++) cx.lineTo(colX(n),top+gr(n*COL)*sc);
-      cx.lineTo(colX(last),top); cx.closePath(); cx.fillStyle='rgba(47,144,136,.14)'; cx.fill();
-      cx.beginPath(); for(n=first;n<=last;n++){ y=top+gr(n*COL)*sc; n>first?cx.lineTo(colX(n),y):cx.moveTo(colX(n),y); } cx.strokeStyle='#2b3238'; cx.lineWidth=1.7; cx.lineJoin='round'; cx.stroke();
-      cx.beginPath(); cx.moveTo(colX(first),base);
-      for(n=first;n<=last;n++){ u=n*COL; cx.lineTo(colX(n),dbY(level(u)*Math.pow(10,-gr(u)/20))); }
-      cx.lineTo(colX(last),base); cx.closePath(); cx.fillStyle='rgba(135,142,150,.28)'; cx.fill();
-      cx.beginPath();
-      for(n=first;n<=last;n++){ y=dbY(level(n*COL)); n>first?cx.lineTo(colX(n),y):cx.moveTo(colX(n),y); }
-      for(n=last;n>=first;n--){ u=n*COL; cx.lineTo(colX(n),dbY(level(u)*Math.pow(10,-gr(u)/20))); }
-      cx.closePath(); cx.fillStyle='rgba(47,144,136,.36)'; cx.fill();
-      cx.restore();
-      // the last sixteen hits, lined up where they start
-      var RW=rx1-rx0, PTS=36, mean=new Float32Array(PTS+1), j, h;
-      function ms(j){ return j<4 ? -1 : 5*(Math.pow(81,(j-4)/(PTS-4))-1)/1000; }   // a little before the hit, then 0 to 400 ms, wider at the start
-      cx.strokeStyle='rgba(47,144,136,.36)'; cx.lineWidth=1;
-      for(h=1;h<=16;h++){ cx.beginPath();
-        for(j=0;j<=PTS;j++){ g=hitGr(k0-h,ms(j)); mean[j]+=g/16; y=top+g*sc; x=rx0+RW*j/PTS; j?cx.lineTo(x,y):cx.moveTo(x,y); }
-        cx.stroke(); }
-      cx.beginPath(); for(j=0;j<=PTS;j++){ y=top+mean[j]*sc; x=rx0+RW*j/PTS; j?cx.lineTo(x,y):cx.moveTo(x,y); } cx.strokeStyle='#2b3238'; cx.lineWidth=2; cx.stroke();
-      if(cLive.live()) requestAnimationFrame(cframe);
+  if(!cc) return;
+  var cx=cc.getContext('2d'), CW,CH, MONO='ui-monospace,SFMono-Regular,Menlo,monospace';
+  function csz(){ var d=Math.min(2,devicePixelRatio||1); CW=cc.clientWidth; CH=cc.clientHeight; cc.width=CW*d; cc.height=CH*d; cx.setTransform(d,0,0,d,0,0); }
+  csz(); addEventListener('resize',csz);
+  // Across the width: a little before the hit, then 0 to 400 ms, wider at the start.
+  var PRE=4/36, q={d:6,a:.006,h:.04,r:.1};
+  // Four characters of compressor, in turn: depth (dB), attack, hold and release (s).
+  var scenes=[ {d:6.4,a:.004,h:.03,r:.07}, {d:4.2,a:.012,h:.06,r:.32}, {d:8.4,a:.002,h:.02,r:.15}, {d:2.8,a:.025,h:.08,r:.2} ];
+  function msAt(u){ return u<PRE ? -1 : 5*(Math.pow(81,(u-PRE)/(1-PRE))-1); }
+  function xAt(ms){ return PRE+(1-PRE)*Math.log(ms/5+1)/Math.log(81); }
+  function shape(ms){ if(ms<0) return 0; var s=ms/1000, g=q.d*(1-Math.exp(-s/q.a)); return s<q.h ? g : g*Math.exp(-(s-q.h)/q.r); }
+  function cframe(now){
+    var t=now/1000, s=scenes[Math.floor(t/3.2)%scenes.length];
+    for(var k in s) q[k]+=(s[k]-q[k])*.06;
+    var y0=CH*.3, dbPx=CH*.05, lw=2.2*Math.min(1.4,Math.max(.75,CW/700)), N=Math.max(120,Math.floor(CW/3)), i, pts=[], ms=[], b=0;
+    for(i=0;i<=N;i++){ ms.push(msAt(i/N)); pts.push([i/N*CW, y0+shape(ms[i])*dbPx]); if(pts[i][1]>pts[b][1]) b=i; }
+    cx.clearRect(0,0,CW,CH); cx.fillStyle='rgba(255,255,255,.35)'; cx.fillRect(0,0,CW,CH);
+    // 0 dB, and the time under it, laid out as axis() lays out the frequencies
+    cx.strokeStyle='rgba(60,66,72,.20)'; cx.lineWidth=1; cx.beginPath(); cx.moveTo(0,y0); cx.lineTo(CW,y0); cx.stroke();
+    cx.font='9px '+MONO; cx.fillStyle='rgba(135,142,150,.9)'; cx.textAlign='center';
+    [[0,'0'],[10,'10'],[50,'50'],[100,'100'],[200,'200 ms']].forEach(function(m){ var x=xAt(m[0])*CW;
+      cx.strokeStyle='rgba(60,66,72,.07)'; cx.beginPath(); cx.moveTo(x,0); cx.lineTo(x,CH); cx.stroke(); cx.fillText(m[1],x,CH-10); });
+    cx.font='10px '+MONO; cx.fillStyle='rgba(135,142,150,.95)';
+    cx.textAlign='left'; cx.fillText('COMP MIRROR · DOWNSTREAM',14,22); cx.textAlign='right'; cx.fillText('last 16 hits',CW-14,22);
+    // the gain reduction: its fill, its line, and a tag at its deepest point
+    cx.beginPath(); cx.moveTo(0,y0); pts.forEach(function(p){ cx.lineTo(p[0],p[1]); }); cx.lineTo(CW,y0); cx.closePath();
+    cx.fillStyle='rgba('+CUT+',.2)'; cx.fill();
+    cx.beginPath(); pts.forEach(function(p,j){ j?cx.lineTo(p[0],p[1]):cx.moveTo(p[0],p[1]); });
+    cx.strokeStyle=INK; cx.lineWidth=lw; cx.lineJoin='round'; cx.lineCap='round'; cx.stroke();
+    var tx=pts[b][0], ty=pts[b][1];
+    if(ty-y0>4){
+      cx.fillStyle=INK; cx.beginPath(); cx.arc(tx,ty,lw*1.6,0,7); cx.fill();
+      var label='−'+shape(ms[b]).toFixed(1)+' dB  '+Math.round(ms[b])+' ms';
+      cx.font='11px '+MONO; var tw=cx.measureText(label).width, left=tx+12+tw>CW-10;
+      cx.fillStyle='rgba('+CUT+',1)'; cx.textAlign=left?'right':'left';
+      cx.fillText(label, left?Math.max(tw+10,tx-12):tx+12, ty+20);
     }
-    var cLive=watch(cc,function(){ requestAnimationFrame(cframe); });
-    requestAnimationFrame(cframe);
+    if(cLive.live()) requestAnimationFrame(cframe);
   }
+  var cLive=watch(cc,function(){ requestAnimationFrame(cframe); });
+  requestAnimationFrame(cframe);
   })();
 
   /* ---- the sign-off mark: its bell rises and falls, and the reflection with it ---- */
